@@ -1,0 +1,31 @@
+#!/bin/bash
+
+nodeinfo=$(scontrol show node)
+name_regex="NodeName=([a-z]+\-?[0-9]+?)"
+cpu_alloc_regex="CPUAlloc=([0-9]+)"
+cpu_total_regex="CPUTot=([0-9]+)"
+mem_alloc_regex="AllocMem=([0-9]+)"
+mem_total_regex="RealMemory=([0-9]+)"
+
+echo -e "Node\t\t\tCPUs(Free)\t\tRAM(Free)"
+echo "---------------------------------------------------------"
+for node in $nodeinfo; do
+	if [[ $node =~ $name_regex ]]; then
+		name=${BASH_REMATCH[1]}
+	fi
+	if [[ $node =~ $cpu_alloc_regex ]]; then
+		cpu_alloc=${BASH_REMATCH[1]}
+	fi
+	if [[ $node =~ $cpu_total_regex ]]; then
+		cpu_total=${BASH_REMATCH[1]}
+	fi
+	if [[ $node =~ $mem_alloc_regex ]]; then
+		mem_alloc=${BASH_REMATCH[1]}
+		cpu_avail=$(expr $cpu_total - $cpu_alloc)
+		mem_avail=$(expr $mem_total - $mem_alloc)
+		printf "%18s\t%2d of %2d\t%6d of %6d\n" $name $cpu_avail $cpu_total $mem_avail $mem_total
+	fi
+	if [[ $node =~ $mem_total_regex ]]; then
+		mem_total=${BASH_REMATCH[1]}
+	fi
+done
