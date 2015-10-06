@@ -23,7 +23,10 @@ for node in $nodeinfo; do
 		mem_alloc=${BASH_REMATCH[1]}
 		cpu_avail=$(expr $cpu_total - $cpu_alloc)
 		mem_avail=$(expr $mem_total - $mem_alloc)
-		printf "%18s\t%2d of %2d\t%6d of %6d\n" $name $cpu_avail $cpu_total $mem_avail $mem_total
+		#Only if non-zero free
+		if [[ $1 == "-a" ]] || [[ $cpu_avail -gt "0" ]]; then
+			printf "%18s\t%2d of %2d\t%6d of %6d\n" $name $cpu_avail $cpu_total $mem_avail $mem_total
+		fi
 	fi
 	if [[ $node =~ $mem_total_regex ]]; then
 		mem_total=${BASH_REMATCH[1]}

@@ -21,7 +21,9 @@ for node in $nodeinfo; do
 	fi
 	if [[ $node =~ $mem_alloc_regex ]]; then
 		mem_alloc=${BASH_REMATCH[1]}
-		printf "%18s\t%2d of %2d\t%6d of %6d\n" $name $cpu_alloc $cpu_total $mem_alloc $mem_total
+		if [[ $1 == "-a" ]] || [[ $cpu_alloc -gt "0" ]]; then
+			printf "%18s\t%2d of %2d\t%6d of %6d\n" $name $cpu_alloc $cpu_total $mem_alloc $mem_total
+		fi
 	fi
 	if [[ $node =~ $mem_total_regex ]]; then
 		mem_total=${BASH_REMATCH[1]}
