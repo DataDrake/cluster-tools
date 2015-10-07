@@ -7,6 +7,11 @@ cpu_total_regex="CPUTot=([0-9]+)"
 mem_alloc_regex="AllocMem=([0-9]+)"
 mem_total_regex="RealMemory=([0-9]+)"
 
+sum_cpu_alloc="0"
+sum_cpu_total="0"
+sum_mem_alloc="0"
+sum_mem_total="0"
+
 echo -e "Node\t\t\tCPUs(Used)\t\tRAM(Used)"
 echo "---------------------------------------------------------"
 for node in $nodeinfo; do
@@ -22,6 +27,10 @@ for node in $nodeinfo; do
 	if [[ $node =~ $mem_alloc_regex ]]; then
 		mem_alloc=${BASH_REMATCH[1]}
 		if [[ $1 == "-a" ]] || [[ $cpu_alloc -gt "0" ]]; then
+			sum_cpu_alloc=$(expr $sum_cpu_alloc + $cpu_alloc)
+                        sum_cpu_total=$(expr $sum_cpu_total + $cpu_total)
+                        sum_mem_alloc=$(expr $sum_mem_alloc + $mem_alloc)
+                        sum_mem_total=$(expr $sum_mem_total + $mem_total)
 			printf "%18s\t%2d of %2d\t%6d of %6d\n" $name $cpu_alloc $cpu_total $mem_alloc $mem_total
 		fi
 	fi
@@ -29,3 +38,5 @@ for node in $nodeinfo; do
 		mem_total=${BASH_REMATCH[1]}
 	fi
 done
+echo "---------------------------------------------------------"
+printf "%18s\t%3d of %3d\t%6d of %7d\n" "Total Used:" $sum_cpu_alloc $sum_cpu_total $sum_mem_alloc $sum_mem_total
