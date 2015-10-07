@@ -12,8 +12,9 @@ sum_cpu_total="0"
 sum_mem_alloc="0"
 sum_mem_total="0"
 
-echo -e "Node\t\t\tCPUs(Used)\t\tRAM(Used)"
-echo "---------------------------------------------------------"
+echo -e "┌──────────────────────────────────────────────────────────┐"
+echo -e "│ Node\t\t\tCPUs(Used)\t\tRAM(Used)  │"
+echo -e "├──────────────────────────────────────────────────────────┤"
 for node in $nodeinfo; do
 	if [[ $node =~ $name_regex ]]; then
 		name=${BASH_REMATCH[1]}
@@ -31,12 +32,14 @@ for node in $nodeinfo; do
                         sum_cpu_total=$(expr $sum_cpu_total + $cpu_total)
                         sum_mem_alloc=$(expr $sum_mem_alloc + $mem_alloc)
                         sum_mem_total=$(expr $sum_mem_total + $mem_total)
-			printf "%18s\t%2d of %2d\t%6d of %6d\n" $name $cpu_alloc $cpu_total $mem_alloc $mem_total
+			printf "│ %18s\t%3d of %3d\t%7d of %7d │\n" $name $cpu_alloc $cpu_total $mem_alloc $mem_total
 		fi
 	fi
 	if [[ $node =~ $mem_total_regex ]]; then
 		mem_total=${BASH_REMATCH[1]}
 	fi
 done
-echo "---------------------------------------------------------"
-printf "%18s\t%3d of %3d\t%6d of %7d\n" "Total Used:" $sum_cpu_alloc $sum_cpu_total $sum_mem_alloc $sum_mem_total
+echo -e "├──────────────────────────────────────────────────────────┤"
+printf "│ %18s\t%3d of %3d\t%7d of %7d │\n" "Total Used:" $sum_cpu_alloc $sum_cpu_total $sum_mem_alloc $sum_mem_total
+echo "└──────────────────────────────────────────────────────────┘"
+
