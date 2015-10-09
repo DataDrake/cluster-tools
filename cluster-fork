@@ -1,0 +1,20 @@
+#!/bin/bash
+
+nodeinfo=$(scontrol show node)
+name_regex="NodeName=([a-z]+\-?[0-9]+?)"
+
+for node in $nodeinfo; do
+	if [[ $node =~ $name_regex ]]; then
+		case $1 in
+			-s)
+				ssh -f -o ConnectTimeout=5 -o StrictHostKeyChecking=no ${BASH_REMATCH[1]} -C $2 > "${BASH_REMATCH[1]}.out"
+			;;
+			*)
+				echo "-------------------------------------------------------"
+				echo "Connecting to node: ${BASH_REMATCH[1]}"
+				echo "-------------------------------------------------------"
+				ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no ${BASH_REMATCH[1]} -C $1
+			;;
+		esac
+	fi
+done
