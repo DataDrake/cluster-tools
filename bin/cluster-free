@@ -27,14 +27,14 @@ for node in $nodeinfo; do
 	fi
 	if [[ $node =~ $mem_alloc_regex ]]; then
 		mem_alloc=${BASH_REMATCH[1]}
-		cpu_avail=$(expr $cpu_total - $cpu_alloc)
-		mem_avail=$(expr $mem_total - $mem_alloc)
+		((cpu_avail = cpu_total - cpu_alloc))
+		((mem_avail = mem_total - mem_alloc))
 		#Only if non-zero free
-		if [[ $1 == "-a" ]] || [[ $cpu_avail -gt "0" ]]; then
-			sum_cpu_avail=$(expr $sum_cpu_avail + $cpu_avail)
-			sum_cpu_total=$(expr $sum_cpu_total + $cpu_total)
-			sum_mem_avail=$(expr $sum_mem_avail + $mem_avail)
-			sum_mem_total=$(expr $sum_mem_total + $mem_total)
+		if [[ $1 == "-a" || $cpu_avail -gt "0" ]]; then
+			((sum_cpu_avail = sum_cpu_avail + cpu_avail))
+			((sum_cpu_total = sum_cpu_total + cpu_total))
+			((sum_mem_avail = sum_mem_avail + mem_avail))
+			((sum_mem_total = sum_mem_total + mem_total))
 			printf "│%18s\t%3d of %3d\t%7d of %7d │\n" $name $cpu_avail $cpu_total $mem_avail $mem_total
 		fi
 	fi
